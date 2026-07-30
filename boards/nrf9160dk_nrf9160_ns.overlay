@@ -1,0 +1,23 @@
+/*
+ * Board overlay for the nRF9160 DK (PCA10090)
+ *
+ * Enables the BME280 environment sensor on the Arduino I2C bus.
+ * The Arduino I2C bus on the nRF9160 DK maps to i2c2:
+ *   SDA = P0.30  (Arduino header D14)
+ *   SCL = P0.31  (Arduino header D15)
+ *
+ * Wiring:
+ *   BME280 SDA  -> P0.30 (DK Arduino D14 / SDA)
+ *   BME280 SCL  -> P0.31 (DK Arduino D15 / SCL)
+ *   BME280 SDO  -> GND   (I2C address 0x76)
+ *   BME280 CSB  -> VIN   (selects I2C mode)
+ */
+&arduino_i2c {
+    status = "okay";
+    clock-frequency = <I2C_BITRATE_STANDARD>;
+
+    bme280: bme280@76 {
+        compatible = "bosch,bme280";
+        reg = <0x76>;
+    };
+};

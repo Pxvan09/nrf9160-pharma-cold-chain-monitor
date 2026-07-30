@@ -1,0 +1,46 @@
+# IoT Pharma Monitoring Device - Partition Manager static configuration
+#
+# WHY THIS FILE EXISTS
+# -------------------
+# log_store.c mounts NVS on a partition named `storage_partition`. On a
+# plain Zephyr build that name comes from devicetree
+# (nordic/nrf91xx_partition.dtsi). But an NCS build for the *_ns target
+# pulls in TF-M and MCUboot, which activates the Partition Manager (PM).
+# When PM is active it OWNS the flash map and the devicetree partitions
+# are IGNORED. Without this file the NVS mount can land at the wrong
+# offset, overlap a firmware slot, or fail to resolve at all.
+#
+# SIZING (derived in README.md section 2.2)
+#   record            = 40 bytes  (BUILD_ASSERT-pinned in record.h)
+#   NVS ATE overhead  =  8 bytes
+#   cost per record   = 48 bytes
+#   flash sector      = 4096 bytes  -> 85 records/sector
+#   8 sectors         = 32768 bytes -> 7 usable + 1 reserved for GC
+#   usable capacity   = 7 x 85      = 595 records
+#
+#   -> 148.8 h offline @ 15 min cadence  (target was 72 h: MET, 2x margin)
+#   ->  49.6 h offline @  5 min cadence
+#   ->   9.9 h offline @ 60 s  cadence   (why the firmware demotes cadence
+#                                         to low-power when coverage drops)
+#
+# NVS requires a MINIMUM of 2 sectors; log_store.c refuses to mount below
+# that and logs an explicit error rather than silently corrupting data.
+#
+# USAGE
+#   Place this file in the application root (next to CMakeLists.txt).
+#   PM picks it up automatically. Verify the resulting map after building:
+#
+#     build/partitions.yml           <- generated, authoritative
+#     build/pm.config                <- PM_* macro values
+#
+#   Confirm PM_STORAGE_PARTITION_SIZE == 0x8000 before trusting the
+#   offline-buffer numbers above.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+storage_partition:
+  address: 0xf8000
+  size: 0x8000        # 32 kB = 8 sectors
+  region: flash_primary
+  placement:
+    after: [app]

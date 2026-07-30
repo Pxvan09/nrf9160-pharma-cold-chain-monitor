@@ -1,0 +1,2 @@
+mainmenu "IoT Pharma Monitor (nRF9160)"
+source "Kconfig.zephyr"
