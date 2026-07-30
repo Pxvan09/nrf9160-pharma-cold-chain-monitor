@@ -1,0 +1,22 @@
+/* PT1000 RTD probe via MAX31865 SPI interface
+ * Required for frozen / ultra-cold profiles (below -40 C).
+ * BME280 and SHT4x both stop working below -40 C.
+ *
+ * PT1000 Callendar-Van Dusen (full 4-term, mandatory below 0 C):
+ *   R(t) = R0*(1 + A*t + B*t^2 + C*(t-100)*t^3)  [t < 0]
+ *   R0=1000, A=3.9083e-3, B=-5.775e-7, C=-4.183e-12
+ *
+ * At t=-70 C: R=723.345 ohm, sensitivity=4.00 ohm/C
+ * MAX31865 15-bit, RREF=4300: LSB=0.131 ohm -> 0.033 C/LSB (3x margin)
+ */
+&arduino_spi {
+    status = "okay";
+    max31865: max31865@0 {
+        compatible = "maxim,max31865";
+        reg = <0>;
+        spi-max-frequency = <1000000>;
+        resistance-at-zero = <1000>;    /* PT1000: R0 = 1000 ohm */
+        reference-resistance = <4300>;  /* RREF = 4300 ohm        */
+        label = "MAX31865";
+    };
+};
