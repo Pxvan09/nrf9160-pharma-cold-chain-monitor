@@ -1,0 +1,5 @@
+# Normalise line endings to LF in the repository.
+# Git Bash on Windows will otherwise warn about CRLF conversion on every file.
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf

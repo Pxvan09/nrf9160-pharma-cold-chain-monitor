@@ -1,0 +1,32 @@
+# Build output
+build/
+twister-out*/
+*.o
+*.elf
+*.hex
+*.map
+*.bin
+
+# West workspace (not part of this repo)
+.west/
+zephyr/
+modules/
+bootloader/
+nrf/
+
+# Credentials - NEVER commit these
+certs/
+*.pem
+*.key
+*.crt
+*private*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
